@@ -1,12 +1,10 @@
-const { client } = require("../database/mongoConnect");
+const collection = require("../database/collection");
 const queryContructor = require("../utils/queryContructor");
 
 const getByQuery = async (query) => {
   const queryObject = queryContructor(query);
 
   try {
-    const collection = client.db("Test").collection("People");
-
     const cursor = collection.find(queryObject);
 
     const documents = [];

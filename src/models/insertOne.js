@@ -1,8 +1,7 @@
-const { client } = require("../database/mongoConnect");
+const collection = require("../database/collection");
 
 const insertOne = async (document) => {
   try {
-    const collection = client.db("Test").collection("People");
     const insertResult = await collection.insertOne(document);
     return insertResult;
   } catch (error) {

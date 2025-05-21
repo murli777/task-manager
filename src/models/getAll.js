@@ -1,8 +1,7 @@
-const { client } = require("../database/mongoConnect");
+const collection = require("../database/collection");
 
 const getAll = async () => {
   try {
-    const collection = client.db("Test").collection("People");
     const cursor = collection.find();
     const documents = [];
 
