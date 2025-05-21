@@ -3,6 +3,7 @@ const getById = require("../models/getById");
 const getByQuery = require("../models/getTaskByQuery");
 const insertOne = require("../models/insertOne");
 const update = require("../models/updateOne");
+const handleError = require("../utils/errorHandler");
 
 const getAllTasks = async (req, res) => {
   try {
@@ -18,19 +19,12 @@ const getAllTasks = async (req, res) => {
 
     return res.status(200).json(result);
   } catch (error) {
-    const timestamp = new Date().toISOString();
-    console.error({
-      errorId: "TASK-GET-ALL-DBERROR",
-      message: error.message,
-      stack: error.stack,
-      timestamp,
-    });
-
-    return res.status(500).json({
-      success: false,
-      response: "Something went wrong while getting tasks...",
-      errorId: "TASK-GET-ALL-DBERROR",
-    });
+    return handleError(
+      error,
+      res,
+      "TASK-GET-ALL-DBERROR",
+      "Something went wrong while getting tasks..."
+    );
   }
 };
 
@@ -48,19 +42,12 @@ const getTaskById = async (req, res) => {
     }
     res.status(200).json({ success: true, response: result });
   } catch (error) {
-    const timestamp = new Date().toISOString();
-    console.error({
-      errorId: "TASK-GET-BYID-DBERROR",
-      message: error.message,
-      stack: error.stack,
-      timestamp,
-    });
-
-    return res.status(500).json({
-      success: false,
-      response: "Something went wrong while getting tasks...",
-      errorId: "TASK-GET-BYID-DBERROR",
-    });
+    return handleError(
+      error,
+      res,
+      "TASK-GET-BYID-DBERROR",
+      "Something went wrong while getting tasks..."
+    );
   }
 };
 
@@ -79,19 +66,12 @@ const getTaskByQuery = async (req, res) => {
 
     return res.status(200).json(result);
   } catch (error) {
-    const timestamp = new Date().toISOString();
-    console.error({
-      errorId: "TASK-GET-QUERY-DBERROR",
-      message: error.message,
-      stack: error.stack,
-      timestamp,
-    });
-
-    return res.status(500).json({
-      success: false,
-      response: "Something went wrong while getting tasks...",
-      errorId: "TASK-GET-QUERY-DBERROR",
-    });
+    return handleError(
+      error,
+      res,
+      "TASK-GET-QUERY-DBERROR",
+      "Something went wrong while getting tasks..."
+    );
   }
 };
 
@@ -102,19 +82,12 @@ const createTask = async (req, res) => {
     const result = await insertOne(body);
     return res.status(201).json({ success: true, response: result });
   } catch (error) {
-    const timestamp = new Date().toISOString();
-    console.error({
-      errorId: "TASK-CREATE-DBERROR",
-      message: error.message,
-      stack: error.stack,
-      timestamp,
-    });
-
-    return res.status(500).json({
-      success: false,
-      response: "Something went wrong while inserting data...",
-      errorId: "TASK-CREATE-DBERROR",
-    });
+    return handleError(
+      error,
+      res,
+      "TASK-CREATE-DBERROR",
+      "Something went wrong while inserting data..."
+    );
   }
 };
 
@@ -142,19 +115,12 @@ const updateTask = async (req, res) => {
     const result = await update(query, data);
     return res.status(200).json({ success: true, response: result });
   } catch (error) {
-    const timestamp = new Date().toISOString();
-    console.error({
-      errorId: "TASK-UPDATE-DBERROR",
-      message: error.message,
-      stack: error.stack,
-      timestamp,
-    });
-
-    return res.status(500).json({
-      success: false,
-      response: "Something went wrong while updating data...",
-      errorId: "TASK-UPDATE-DBERROR",
-    });
+    return handleError(
+      error,
+      res,
+      "TASK-UPDATE-DBERROR",
+      "Something went wrong while updating data..."
+    );
   }
 };
 
