@@ -1,10 +1,27 @@
 /**
  * Converts nested query objects into MongoDB dot notation format while preserving MongoDB operators
- * Examples:
- * { name: { first: 'John' } } becomes { 'name.first': 'John' }
- * { age: { $gte: 25 } } stays as { age: { $gte: 25 } }
- * { price: { $ne: 1.99, $exists: true } } stays as { price: { $ne: 1.99, $exists: true } }
- * { address: { city: { $in: ['NYC', 'LA'] } } } becomes { 'address.city': { $in: ['NYC', 'LA'] } }
+ * @param {Object} query - The query object to convert
+ * @returns {Object} Converted query with dot notation for nested fields and preserved MongoDB operators
+ *
+ * @example
+ * // Simple nested object
+ * queryConstructor({ name: { first: 'John' } })
+ * // Returns: { 'name.first': 'John' }
+ *
+ * @example
+ * // With MongoDB operator
+ * queryConstructor({ age: { $gte: 25 } })
+ * // Returns: { age: { $gte: 25 } }
+ *
+ * @example
+ * // Multiple MongoDB operators
+ * queryConstructor({ price: { $ne: 1.99, $exists: true } })
+ * // Returns: { price: { $ne: 1.99, $exists: true } }
+ *
+ * @example
+ * // Nested fields with MongoDB operator
+ * queryConstructor({ address: { city: { $in: ['NYC', 'LA'] } } })
+ * // Returns: { 'address.city': { $in: ['NYC', 'LA'] } }
  */
 const queryContructor = (query) => {
   // If no query provided, return empty object
@@ -12,6 +29,11 @@ const queryContructor = (query) => {
 
   const result = {};
 
+  /**
+   * Recursively processes an object to create dot notation paths
+   * @param {Object} obj - The object to process
+   * @param {string} parentPath - The parent path in dot notation
+   */
   const processObject = (obj, parentPath = "") => {
     for (const key in obj) {
       const value = obj[key];
