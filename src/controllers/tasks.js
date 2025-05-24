@@ -1,133 +1,110 @@
-const getAll = require("../models/getAll");
-const getById = require("../models/getById");
-const getByQuery = require("../models/getTaskByQuery");
-const insertOne = require("../models/insertOne");
-const update = require("../models/updateOne");
-const handleError = require("../utils/errorHandler");
+const {
+  getAll,
+  getById,
+  getByQuery,
+  insertOne,
+  updateByQuery,
+  updateById,
+  deleteById,
+} = require("../models");
+const asyncWrapper = require("../middlewares/asyncWrapper");
+const { createCustomError } = require("../errors/custom-error");
 
-const getAllTasks = async (req, res) => {
-  try {
-    const result = await getAll();
+const getAllTasks = asyncWrapper(async (req, res, next) => {
+  const result = await getAll();
 
-    if (Array.isArray(result) && !result.length) {
-      return res.status(404).json({
-        success: false,
-        response: "No results found",
-        errorId: "TASK-GET-ALL-NOTFOUND",
-      });
-    }
-
-    return res.status(200).json(result);
-  } catch (error) {
-    return handleError(
-      error,
-      res,
-      "TASK-GET-ALL-DBERROR",
-      "Something went wrong while getting tasks..."
-    );
+  if (Array.isArray(result) && !result.length) {
+    return next(createCustomError("No tasks found.", 404));
   }
-};
+  return res.status(200).json({ success: true, response: result });
+});
 
-const getTaskById = async (req, res) => {
+const getTaskById = asyncWrapper(async (req, res, next) => {
   const { id } = req.params;
+  const result = await getById(id);
 
-  try {
-    const result = await getById(id);
-    if (!result) {
-      return res.status(404).json({
-        success: false,
-        response: "Task not found",
-        errorId: "TASK-GET-BYID-NOTFOUND",
-      });
-    }
-    res.status(200).json({ success: true, response: result });
-  } catch (error) {
-    return handleError(
-      error,
-      res,
-      "TASK-GET-BYID-DBERROR",
-      "Something went wrong while getting tasks..."
-    );
+  if (!result) {
+    return next(createCustomError("No task with ID.", 404));
   }
-};
+  return res.status(200).json({ success: true, response: result });
+});
 
-const getTaskByQuery = async (req, res) => {
+const getTaskByQuery = asyncWrapper(async (req, res, next) => {
   const query = req.body.query;
+  const result = await getByQuery(query);
 
-  try {
-    const result = await getByQuery(query);
-    if (Array.isArray(result) && !result.length) {
-      return res.status(404).json({
-        success: false,
-        response: "No results found",
-        errorId: "TASK-GET-QUERY-NOTFOUND",
-      });
-    }
-
-    return res.status(200).json(result);
-  } catch (error) {
-    return handleError(
-      error,
-      res,
-      "TASK-GET-QUERY-DBERROR",
-      "Something went wrong while getting tasks..."
-    );
+  if (Array.isArray(result) && !result.length) {
+    return next(createCustomError("No tasks match with search criteria.", 404));
   }
-};
+  return res.status(200).json({ success: true, response: result });
+});
 
-const createTask = async (req, res) => {
+const createTask = asyncWrapper(async (req, res, next) => {
   const body = req.body;
 
-  try {
-    const result = await insertOne(body);
-    return res.status(201).json({ success: true, response: result });
-  } catch (error) {
-    return handleError(
-      error,
-      res,
-      "TASK-CREATE-DBERROR",
-      "Something went wrong while inserting data..."
-    );
+  if (!body || Object.keys(body).length === 0) {
+    return next(createCustomError("No task data provided.", 400));
   }
-};
 
-const updateTask = async (req, res) => {
+  const result = await insertOne(body);
+  return res.status(201).json({ success: true, response: result });
+});
+
+const updateTask = asyncWrapper(async (req, res, next) => {
   const { query, data } = req.body;
 
   if (!query || Object.keys(query).length === 0) {
-    return res.status(400).json({
-      success: false,
-      response: "No search criteria provided.",
-      errorId: "TASK-UPDATE-NOQUERY",
-    });
+    return next(createCustomError("No search criteria provided.", 400));
   }
 
   if (!data || Object.keys(data).length === 0) {
-    return res.status(400).json({
-      success: false,
-      response:
+    return next(
+      createCustomError(
         "No update data provided. Please specify the changes you want to make to the document(s).",
-      errorId: "TASK-UPDATE-NODATA",
-    });
-  }
-
-  try {
-    const result = await update(query, data);
-    return res.status(200).json({ success: true, response: result });
-  } catch (error) {
-    return handleError(
-      error,
-      res,
-      "TASK-UPDATE-DBERROR",
-      "Something went wrong while updating data..."
+        400
+      )
     );
   }
-};
 
-const deleteTask = (req, res) => {
+  const result = await updateByQuery(query, data);
+  return res.status(200).json({ success: true, response: result });
+});
+
+const updateTaskById = asyncWrapper(async (req, res, next) => {
   const { id } = req.params;
-  res.send(`Delete task with ID ${id}`);
-};
+  const data = req.body;
+
+  if (!data || Object.keys(data).length === 0) {
+    return next(
+      createCustomError(
+        "No update data provided. Please specify the changes you want to make to the document(s).",
+        400
+      )
+    );
+  }
+
+  const result = await updateById(id, data);
+  if (!result) {
+    return next(createCustomError("Task not found", 404));
+  }
+  return res.status(200).json({ success: true, response: result });
+});
+
+const deleteTask = asyncWrapper(async (req, res, next) => {
+  const { id } = req.params;
+  const result = await deleteById(id);
+
+  if (!result) {
+    return next(createCustomError("Task not found", 404));
+  }
+  return res.status(200).json({
+    success: true,
+    response: {
+      message: "Task deleted successfully",
+      deletedTask: result,
+    },
+  });
+});
 
 module.exports = {
   getAllTasks,
@@ -135,5 +112,6 @@ module.exports = {
   getTaskById,
   getTaskByQuery,
   updateTask,
+  updateTaskById,
   deleteTask,
 };

@@ -1,7 +1,7 @@
 const { client } = require("../database/mongoConnect");
 
-const databaseName = "Test";
-const collectionName = "People";
+const databaseName = "Tasks";
+const collectionName = "tasks";
 
 const collection = client.db(databaseName).collection(collectionName);
 
