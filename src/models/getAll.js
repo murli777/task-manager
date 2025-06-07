@@ -2,7 +2,7 @@ const collection = require("../database/collection");
 
 const getAll = async () => {
   try {
-    const cursor = collection.find();
+    const cursor = collection.find({});
     const documents = [];
 
     for await (const doc of cursor) {

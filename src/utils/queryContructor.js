@@ -47,7 +47,17 @@ const queryContructor = (query) => {
           processObject(value, currentPath);
         }
       } else {
-        result[currentPath] = value;
+        const convertToNumber = Number(value);
+
+        isNaN(convertToNumber)
+          ? (result[currentPath] = value)
+          : (result[currentPath] = convertToNumber);
+
+        if (value === "true" || value === "false") {
+          result[currentPath] = Boolean(value);
+        } else {
+          result[currentPath] = value;
+        }
       }
     }
   };

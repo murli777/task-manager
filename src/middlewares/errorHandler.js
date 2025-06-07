@@ -24,6 +24,12 @@ const errorHandler = (error, req, res, next) => {
     });
   }
 
+  console.error({
+    message: error.message,
+    stack: error.stack,
+    timestamp,
+  });
+
   return res.status(500).json({
     success: false,
     response: "Something went wrong. Please try again later.",

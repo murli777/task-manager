@@ -1,6 +1,6 @@
 const getAll = require("./getAll");
 const getById = require("./getById");
-const getByQuery = require("./getTaskByQuery");
+const getByQuery = require("./getByQuery");
 const insertOne = require("./insertOne");
 const updateByQuery = require("./updateByQuery");
 const updateById = require("./updateById");

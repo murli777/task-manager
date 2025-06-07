@@ -1,5 +1,5 @@
 const {
-  getAll,
+  // getAll,
   getById,
   getByQuery,
   insertOne,
@@ -7,17 +7,20 @@ const {
   updateById,
   deleteById,
 } = require("../models");
+
 const asyncWrapper = require("../middlewares/asyncWrapper");
 const { createCustomError } = require("../errors/custom-error");
 
-const getAllTasks = asyncWrapper(async (req, res, next) => {
-  const result = await getAll();
+// Replaced by getTasks.
 
-  if (Array.isArray(result) && !result.length) {
-    return next(createCustomError("No tasks found.", 404));
-  }
-  return res.status(200).json({ success: true, response: result });
-});
+// const getAllTasks = asyncWrapper(async (req, res, next) => {
+//   const result = await getAll();
+
+//   if (Array.isArray(result) && !result.length) {
+//     return next(createCustomError("No tasks found.", 404));
+//   }
+//   return res.status(200).json({ success: true, response: result });
+// });
 
 const getTaskById = asyncWrapper(async (req, res, next) => {
   const { id } = req.params;
@@ -29,9 +32,20 @@ const getTaskById = asyncWrapper(async (req, res, next) => {
   return res.status(200).json({ success: true, response: result });
 });
 
-const getTaskByQuery = asyncWrapper(async (req, res, next) => {
-  const query = req.body.query;
-  const result = await getByQuery(query);
+// Get all tasks if no search parameters provided
+
+const getTasks = asyncWrapper(async (req, res, next) => {
+  let queryObj = {};
+
+  if (req.query) {
+    queryObj = req.query;
+  }
+
+  if (req.body) {
+    queryObj = req.body;
+  }
+
+  const result = await getByQuery(queryObj);
 
   if (Array.isArray(result) && !result.length) {
     return next(createCustomError("No tasks match with search criteria.", 404));
@@ -107,10 +121,9 @@ const deleteTask = asyncWrapper(async (req, res, next) => {
 });
 
 module.exports = {
-  getAllTasks,
   createTask,
   getTaskById,
-  getTaskByQuery,
+  getTasks,
   updateTask,
   updateTaskById,
   deleteTask,
