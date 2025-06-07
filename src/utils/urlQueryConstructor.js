@@ -1,5 +1,5 @@
 const urlQueryContructor = (query) => {
-  const { name, company, featured, sort } = query;
+  const { name, company, featured } = query;
 
   const queryObject = {};
 
