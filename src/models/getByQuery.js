@@ -1,26 +1,13 @@
 const collection = require("../database/collection");
 const urlQueryContructor = require("../utils/urlQueryConstructor");
+const getSortObj = require("../utils/getSortObj");
 
 const getByQuery = async (query) => {
   const queryObject = urlQueryContructor(query);
-  const sortObj = {};
+  const sortObj = getSortObj(query.sort);
 
   try {
     let cursor;
-
-    if (query.sort) {
-      const sortArr = query.sort.split(",");
-
-      sortArr.forEach((str) => {
-        if (str[0] !== "-") {
-          const value = str;
-          sortObj[value] = 1;
-        } else {
-          const value = str.slice(1);
-          sortObj[value] = -1;
-        }
-      });
-    }
 
     if (sortObj) {
       cursor = collection.find(queryObject).sort(sortObj);
