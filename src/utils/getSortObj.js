@@ -1,5 +1,5 @@
 const getSortObj = (sortStr) => {
-  if (!sortStr) return {};
+  if (!sortStr) return { name: 1 };
 
   const sortArr = sortStr.split(",");
 
