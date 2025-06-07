@@ -9,13 +9,17 @@ const getByQuery = async (query) => {
     let cursor;
 
     if (query.sort) {
-      if (query.sort[0] !== "-") {
-        const value = query.sort;
-        sortObj[value] = 1;
-      } else {
-        const value = query.sort.slice(1);
-        sortObj[value] = -1;
-      }
+      const sortArr = query.sort.split(",");
+
+      sortArr.forEach((str) => {
+        if (str[0] !== "-") {
+          const value = str;
+          sortObj[value] = 1;
+        } else {
+          const value = str.slice(1);
+          sortObj[value] = -1;
+        }
+      });
     }
 
     if (sortObj) {
