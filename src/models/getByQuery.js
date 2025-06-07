@@ -1,18 +1,18 @@
 const collection = require("../database/collection");
 const urlQueryContructor = require("../utils/urlQueryConstructor");
 const getSortObj = require("../utils/getSortObj");
+const getProjectionObj = require("../utils/getProjectionObj");
 
 const getByQuery = async (query) => {
   const queryObject = urlQueryContructor(query);
   const sortObj = getSortObj(query.sort);
 
   try {
-    let cursor;
+    let cursor = collection.find(queryObject).sort(sortObj);
 
-    if (sortObj) {
-      cursor = collection.find(queryObject).sort(sortObj);
-    } else {
-      cursor = collection.find(queryObject);
+    if (query.fields) {
+      const projObj = getProjectionObj(query.fields);
+      cursor = cursor.project(projObj);
     }
 
     const documents = [];
