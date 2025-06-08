@@ -1,5 +1,5 @@
 const urlQueryContructor = (query) => {
-  const { name, company, featured } = query;
+  const { name, completed } = query;
 
   const queryObject = {};
 
@@ -7,12 +7,8 @@ const urlQueryContructor = (query) => {
     queryObject.name = { $regex: name, $options: "i" };
   }
 
-  if (featured) {
-    queryObject.featured = featured === "true" ? true : false;
-  }
-
-  if (company) {
-    queryObject.company = company;
+  if (completed !== undefined) {
+    queryObject.completed = completed === "true" ? true : false;
   }
 
   return queryObject;
