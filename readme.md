@@ -2,6 +2,14 @@
 
 A RESTful API for managing tasks with MongoDB as the database. This API provides endpoints for creating, reading, updating, and deleting tasks.
 
+⚠️ **Warning: This is a demonstration project and should not be used in production environments.**
+- No authentication/authorization implemented
+- Basic error handling
+- No rate limiting
+- No security hardening
+- No input validation middleware
+- Minimal logging
+
 ## Base URL
 
 ```
